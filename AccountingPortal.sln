@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountingPortal", "AccountingPortal\AccountingPortal.csproj", "{DE0D6C4D-6900-4ED4-A643-3A4BA6327DD0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{882EC52B-2773-4036-802B-FCBBC5D8E9CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibProfiles", "Libs\LibProfiles\LibProfiles.csproj", "{334A6696-7B93-490C-A6DE-2324CA2D7796}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{DE0D6C4D-6900-4ED4-A643-3A4BA6327DD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE0D6C4D-6900-4ED4-A643-3A4BA6327DD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE0D6C4D-6900-4ED4-A643-3A4BA6327DD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{334A6696-7B93-490C-A6DE-2324CA2D7796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{334A6696-7B93-490C-A6DE-2324CA2D7796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{334A6696-7B93-490C-A6DE-2324CA2D7796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{334A6696-7B93-490C-A6DE-2324CA2D7796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{334A6696-7B93-490C-A6DE-2324CA2D7796} = {882EC52B-2773-4036-802B-FCBBC5D8E9CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {07A2C2DD-6611-46AD-857E-842BEBA906B2}

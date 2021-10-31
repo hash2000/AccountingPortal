@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +29,12 @@ namespace AccountingPortal
         {
             services.AddRazorPages();
             services.AddCors();
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                //.AddJwtBearer(n => { 
+                    
+                //})
+                ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,10 +50,10 @@ namespace AccountingPortal
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             //app.UseStaticFiles();
 
             app.UseRouting();
@@ -54,7 +61,7 @@ namespace AccountingPortal
 
             app.UseAuthorization();
 
-
+            //app.Map("/security/admin/auth/", )
         }
     }
 }
