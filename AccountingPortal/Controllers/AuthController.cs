@@ -1,5 +1,5 @@
 ﻿using AccountingPortal.Options;
-using LibProfiles.Models;
+using LibProfiles.Context.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
