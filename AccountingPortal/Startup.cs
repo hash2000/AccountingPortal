@@ -1,26 +1,37 @@
 using AccountingPortal.Options;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
+using LibProfiles.Context;
+using LibProfiles.Mapper;
+using LibProfiles.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
+using Newtonsoft.Json.Serialization;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace AccountingPortal
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            var propertiesPath = Path.Combine(env.ContentRootPath, "Properties");
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(propertiesPath)
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+               .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -28,7 +39,16 @@ namespace AccountingPortal
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {            
+        {
+            services.AddOptions();
+
+            var constr = Configuration.GetConnectionString("DbConnectionString");
+
+            services.AddDbContext<ProfilesContext>(options =>
+            {
+                options.UseSqlServer(constr);
+            });
+
             services.AddCors();
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,8 +76,39 @@ namespace AccountingPortal
                     };
                 });
 
-            services.AddRazorPages();
-            services.AddControllersWithViews();
+            //services.AddRazorPages();
+            //services.AddControllersWithViews();
+
+            services
+                .AddControllers()
+                .AddControllersAsServices()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                });
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.Register<AutoMapper.IConfigurationProvider>(ctx => new MapperConfiguration(cfg => cfg
+                  .AddProfile(new MappingProfile()))
+            ).SingleInstance();
+
+            builder.Register<IMapper>(ctx =>
+            {
+                var scope = ctx.Resolve<ILifetimeScope>();
+                var provider = ctx.Resolve<AutoMapper.IConfigurationProvider>();
+                return new Mapper(provider, scope.Resolve);
+            })
+            .PropertiesAutowired();
+
+            builder.RegisterAssemblyTypes(typeof(AuthService).Assembly)
+               .Where(t => t.Name.EndsWith("Service"))
+               .PropertiesAutowired();
+
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+              .Where(t => t.Name.EndsWith("Controller"))
+              .PropertiesAutowired();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,7 +131,8 @@ namespace AccountingPortal
             //app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseCors(options => {
+            app.UseCors(options =>
+            {
                 options.AllowAnyOrigin();
                 options.AllowAnyHeader();
                 options.AllowAnyMethod();
