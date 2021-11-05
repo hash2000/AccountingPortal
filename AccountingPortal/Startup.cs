@@ -1,4 +1,3 @@
-using AccountingPortal.Options;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -46,7 +45,7 @@ namespace AccountingPortal
 
             services.AddDbContext<ProfilesContext>(options =>
             {
-                options.UseSqlServer(constr);
+                options.UseNpgsql(constr);
             });
 
             services.AddCors();
@@ -60,17 +59,17 @@ namespace AccountingPortal
                         // укзывает, будет ли валидироваться издатель при валидации токена
                         ValidateIssuer = true,
                         // строка, представляющая издателя
-                        ValidIssuer = AuthOptions.ISSUER,
+                        ValidIssuer = AuthService.ISSUER,
 
                         // будет ли валидироваться потребитель токена
                         ValidateAudience = true,
                         // установка потребителя токена
-                        ValidAudience = AuthOptions.AUDIENCE,
+                        ValidAudience = AuthService.AUDIENCE,
                         // будет ли валидироваться время существования
                         ValidateLifetime = true,
 
                         // установка ключа безопасности
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        IssuerSigningKey = AuthService.GetSymmetricSecurityKey(),
                         // валидация ключа безопасности
                         ValidateIssuerSigningKey = true,
                     };
